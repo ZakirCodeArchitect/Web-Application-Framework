@@ -1,23 +1,36 @@
-const http = require('http')
+const http = require('http');
+const fs = require('fs');
 
-// http.createServer((req,res) => {
-//     res.write("Nodejs Server")
-//     res.end();
-// }).listen(3000)
-const fs = require('fs')
+function dataControl(req, res) {   
+    console.log("Server is running");
 
-function dataControl(req,res)
-{   
-    console.log("server is running")
-    const log = `\n ${new Date().getHours().toString()}\t ${req.url} \t New request recieved`;
-    fs.appendFile("text.txt", log, (err) => {})
-    
-    res.write("Nodejs Server Running")
+    // Log the request details to text.txt
+    const log = `\n ${new Date().getHours().toString()}\t ${req.url} \t New request received`;
+    fs.appendFile("text.txt", log, (err) => {
+        if (err) {
+            console.error("Failed to write to file");
+        }
+    });
+
+    // Routing logic
+    switch (req.url) {
+        case '/':
+            res.write("HomePage");
+            break;
+
+        case '/dashboard':
+            res.write("Dashboard");
+            break;
+
+        default:
+            res.write("Nodejs Server Running");
+            break;
+    }
+
     res.end();
 }
 
-http.createServer(dataControl).listen(3000);
-
-
-
-
+// Create the server
+http.createServer(dataControl).listen(3000, () => {
+    console.log("Server is listening on port 3000");
+});
