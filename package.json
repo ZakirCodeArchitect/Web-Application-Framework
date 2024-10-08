@@ -1,5 +1,15 @@
 {
   "dependencies": {
     "node-fetch": "^3.3.2"
-  }
+  },
+  "name": "demo",
+  "version": "1.0.0",
+  "description": "nodejs",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "npm run"
+  },
+  "author": "zakir matloob",
+  "license": "ISC"
 }
