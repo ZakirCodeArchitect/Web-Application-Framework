@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 
-function dataControl(req, res) {   
+function dataControl(req, res) {
     console.log("Server is running");
 
     // Log the request details to text.txt
@@ -15,7 +15,7 @@ function dataControl(req, res) {
     // Routing logic
     switch (req.url) {
         case '/':
-            res.write("HomePage");
+            res.write("HomePage"); // what we are displaying on the web-browser
             break;
 
         case '/dashboard':
