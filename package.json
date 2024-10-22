@@ -1,15 +1,16 @@
 {
-  "dependencies": {
-    "node-fetch": "^3.3.2",
-    "url": "^0.11.4"
-  },
-  "name": "demo",
-  "version": "1.0.0",
-  "description": "nodejs",
-  "main": "index.js",
-  "scripts": {
-    "test": "npm run"
-  },
-  "author": "zakir matloob",
-  "license": "ISC"
+    "dependencies": {
+        "node-fetch": "^3.3.2",
+        "url": "^0.11.4"
+    },
+    "name": "demo",
+    "version": "1.0.0",
+    "description": "nodejs",
+    "main": "index.js",
+    "scripts": {
+        "test": "npm run",
+        "start": "node index.js"
+    },
+    "author": "zakir matloob",
+    "license": "ISC"
 }
