@@ -131,7 +131,7 @@ SignUp()
 // This approach uses async/await for more readable code, where each function is awaited. We’ll also use try/catch for error handling.
 
 // Code Using Async/Await:
-
+/*
 function SignUp() {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -189,9 +189,10 @@ async function executeTasks() {
         console.error('Caught an error:', error);
     }
 }
+*/
 
 // // Run the tasks
-executeTasks();
+// executeTasks();
 
 // Explanation:
 
