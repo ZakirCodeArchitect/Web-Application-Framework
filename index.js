@@ -34,6 +34,7 @@ function dataControl(req, res) {
         case '/':
             const home = fs.readFileSync("./home.html", "utf-8")
             res.end(home); // what we are displaying on the web-browser
+            console.log(home)
             break;
 
         case '/dashboard':
@@ -42,11 +43,11 @@ function dataControl(req, res) {
 
         case '/contacts':
             res.write("Contacts")
-                // const user = myURL.query.name;
-                // const id = myURL.query.id;
-                // console.log(user);
-                // console.log(id)
-                // res.write(`This is the userName ${user}`)
+            const user = myURL.query.name;
+            // const id = myURL.query.id;
+            console.log(user);
+            // console.log(id)
+            res.write(`This is the userName ${user}`)
             myEmitter.on("FileLoaded", () => {
                 console.log("Contact provided")
             })
