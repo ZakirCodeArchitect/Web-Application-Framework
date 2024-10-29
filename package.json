@@ -1,6 +1,7 @@
 {
     "dependencies": {
         "dotenv": "^16.4.5",
+        "express": "^4.21.1",
         "node-fetch": "^3.3.2",
         "url": "^0.11.4"
     },
@@ -10,7 +11,7 @@
     "main": "index.js",
     "scripts": {
         "test": "npm run",
-        "start": "nodemon index.js"
+        "start": "nodemon Express/index.js"
     },
     "author": "zakir matloob",
     "license": "ISC",
