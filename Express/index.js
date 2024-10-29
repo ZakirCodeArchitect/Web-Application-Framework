@@ -44,18 +44,31 @@ const users = require("./MOCK_DATA.json")
     Client Side Rendering - CSR ( React.js )
 */
 
-// Routing 
-app.get("/", (req,res) => {
-    res.end("Home Page")
-})
 
-app.get("/users", (req,res) => {
+app.get("/users", (req, res) => {
+    const html = `
+        <table border="1" cellpadding="9" cellspacing="0">
+            <thead>
+                <tr>
+                    <th><strong>First Name</strong></th>
+                    <th><strong>Last Name</strong></th>
+                    <th><strong>Email</strong></th>
+                </tr>
+            </thead>
+            <tbody>
+                ${users.map((user) => 
+                    `<tr>
+                        <td>${user.first_name}</td>
+                        <td>${user.last_name}</td>
+                        <td>${user.email}</td>
+                    </tr>`
+                ).join("")}
+            </tbody>
+        </table>
+    `;
+    return res.send(html);
+});
 
-    const html = `<ul>
-    ${users.map((user)=>`<li>${user.first_name}</li>`).join("")}
-    </ul>`
-    return res.send(html) // sending json data
-})
 
 app.get("/contacts", (req,res) => {
     res.end("Contacts")
