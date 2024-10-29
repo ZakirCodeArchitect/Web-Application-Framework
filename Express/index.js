@@ -56,7 +56,7 @@ app.get("/users", (req, res) => {
                 </tr>
             </thead>
             <tbody>
-                ${users.map((user) => 
+            ${users.filter((user) => user.email.endsWith('.com')).map((user) => 
                     `<tr>
                         <td>${user.first_name}</td>
                         <td>${user.last_name}</td>
