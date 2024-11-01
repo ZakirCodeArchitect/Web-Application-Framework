@@ -2,6 +2,7 @@ const express = require("express")
 const app = express();
 const dotenv = require('dotenv').config();
 const users = require("./MOCK_DATA.json")
+const fs = require('fs')
 
 /*  Information: 
 
@@ -42,8 +43,22 @@ const users = require("./MOCK_DATA.json")
         - Fast as compared to CSR.
 
     Client Side Rendering - CSR ( React.js )
+
+
+    --------------------------------------------------------------------------------------------
+    Lecture+8 - Friday ( 1-Nov-2024 )
+
+    Dynamic Path Parameter
+
+    POSTMAN -> Use to Test API
+
+    - browser performs get method by default.
+    - 
+
+
 */
 
+app.use(express.urlencoded({ extended: false }))
 
 app.get("/users", (req, res) => {
     const html = `
@@ -66,12 +81,49 @@ app.get("/users", (req, res) => {
             </tbody>
         </table>
     `;
+
     return res.send(html);
 });
 
 
 app.get("/contacts", (req,res) => {
     res.end("Contacts")
+})
+
+// Lecture # 8 
+
+// app.route('/api/users/:id') -> Can merge the similar ones using this approach.
+
+app.route('/api/users/:id')
+.get((req,res)=>{
+    const id = Number(req.params.id);
+    const user = users.find(user => user.id === id);
+
+    res.json(user)
+}).post((req, res) => {
+    // Create a User
+    const body = req.body;
+
+    users.push({ id: users.length + 1, ...body }); // Spread operator to add new user
+
+    // Write to file
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
+        if (err) {
+            console.error(err);
+            res.status(500).json({ message: "Error writing file" });
+        } else {
+            res.json({ message: "Success" });
+        }
+    });
+})
+.patch((req,res) => {
+    // Update a User with ID
+    res.json({message: "Update a User"})
+
+}).delete((req,res) => {
+    // Delete a User if exists
+    res.json({message: "Delete a User"})
+
 })
 
 
