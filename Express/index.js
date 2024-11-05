@@ -53,7 +53,42 @@ const fs = require('fs')
     POSTMAN -> Use to Test API
 
     - browser performs get method by default.
-    - 
+    
+    Lecture : 10
+
+    REST Architecture
+
+    REST - Representational State Transfer
+    
+        - an architectual style that provides standards to communicate b/w computer systems.
+
+        1. Separate API's into logical resources (must be Noun)-> an object  or representation which has data associated with it.
+        2. Expose structure resource-based URL
+        3. http methods 
+            -> GET/api/users/1 , GET/users , GET/api/users |-> Read in CRUD
+            -> POST/api/users |-> Create in CRUD  ( POST = Verb, /api/users = Noun )
+            -> PUT/api/users/id -> if we have to update everything |-> Update
+            -> PATCH/api/users/id -> if we have to update only one thing of the data e.g just email. |-> Update
+            -> DELELTE/api/users/id -> to delete any user |-> Delete in CRUD
+
+            GraphQL API -> only one API endpoint
+    
+        4. JSON Data:
+            [{id=1,hostname="",..... }, { }, ...]
+
+        JSEND JSON Data:
+            - Can pass object within an object. 
+            - {
+                "states": "success/Failure" //used here res.json({success})
+                "data": {[{ },{ },{ }]}
+                }
+
+        5. API must be state-less:
+            - All state is handled on the client side. e.g what is next page. 1,2,3,4, next page.
+            - 
+
+
+
 
 
 */
@@ -116,13 +151,58 @@ app.route('/api/users/:id')
         }
     });
 })
-.patch((req,res) => {
-    // Update a User with ID
-    res.json({message: "Update a User"})
+.patch((req, res) => {
+    // Get the user ID from the request parameters
+    const id = Number(req.params.id);
+
+    // Find the user with the specified ID
+    const user = users.find((user) => user.id === id);
+
+    // Check if the user exists
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    // Get the index of the user in the users array
+    const index = users.indexOf(user);
+
+    // Update the user data
+    const updatedUser = Object.assign(user, req.body);
+
+    // Replace the user at the specified index with the updated data
+    users[index] = updatedUser;
+
+    // Write the updated users array to the file
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
+        if (err) {
+            return res.status(400).json({ message: "Failed to write in file" });
+        }
+        console.log(updatedUser)
+        res.status(200).json({ message: "Successfully written in file", updatedUser });
+    });
 
 }).delete((req,res) => {
     // Delete a User if exists
-    res.json({message: "Delete a User"})
+
+    const id = Number(req.params.id);
+    const user = users.find((user) => user.id === id);
+
+    if(!user)
+    {
+        res.status(404).json("User doesnot Exist")
+    }
+    const index = users.indexOf(user);
+
+    users.splice(index, 1); // deleting only that id
+
+    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
+        if(err)
+        {
+            res.status(400).json("Error writing in File")
+        }
+
+        res.status(200).json("File Deleted Successfully")
+    })
 
 })
 
@@ -135,3 +215,4 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, ()=>{
     console.log(`Express Server Started on PORT : ${PORT}`)
 })
+
