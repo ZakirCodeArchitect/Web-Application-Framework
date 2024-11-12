@@ -119,8 +119,9 @@ const app = express();
 // middlewares : 
 app.use(express.urlencoded({ extended: false }))
 app.use(morgan('tiny'));    // lecture 12
-app.use('/api/users', userRouter); //attached router
 
+app.use('/api/users', userRouter); //attached router
+app.use('/api/users/:id', userRouter);
 
 // Lecture # 8 
 

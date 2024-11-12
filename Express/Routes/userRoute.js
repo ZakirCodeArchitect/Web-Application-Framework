@@ -10,7 +10,7 @@ const {
 
 router.get("/", getAllUsers);
 router.get("/:id", getUserById);
-router.post("/", createUser);        // No need for `:id` in POST, as it’s a new user
+router.post("/", createUser);        
 router.patch("/:id", updateUser);
 router.delete("/:id", deleteUser);
 
