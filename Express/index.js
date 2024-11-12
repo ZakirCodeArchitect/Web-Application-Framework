@@ -1,8 +1,10 @@
 const express = require("express")
-const app = express();
+
 const dotenv = require('dotenv').config();
-const users = require("./MOCK_DATA.json")
-const fs = require('fs')
+
+const morgan = require('morgan');
+
+const userRouter = require("./Routes/userRoute.js");
 
 /*  Information: 
 
@@ -88,123 +90,42 @@ const fs = require('fs')
             - 
 
 
+        Lecture 12:
 
+        Middleware:
+            - manipulates the request and the response object before sending the response.
+            - app.use(express.json()); -> rturns a middleware function. (req, res, next) |=> 3rd party middleware
+            - app.use(logger) -> here no parenthesis so, it means this one is a custom middlware.
+            - In custom built middleware , its mandatory to pass next.
+            - morgan (3rd party middleware) -> allows us to see the request data in console. [npm i morgan] -> app.use(morgan()) , parenthesis shows 3rd part middleware
+            - At the last is the Router handler.
+            - if only one middleware it has to be a route handler.
+        
+        Mounting:
+            - apply middleware on a certain routes.
+            - create a route for each resource i.e ( users , products, books, movies, .....). 
+            - Can attach different routers to different resources.
 
 
 */
 
+const app = express();
+
+// routers:
+
+// returns a middleware function.
+// const movieRouter = express.Router(); 
+
+// middlewares : 
 app.use(express.urlencoded({ extended: false }))
+app.use(morgan('tiny'));    // lecture 12
+app.use('/api/users', userRouter); //attached router
 
-app.get("/users", (req, res) => {
-    const html = `
-        <table border="1" cellpadding="9" cellspacing="0">
-            <thead>
-                <tr>
-                    <th><strong>First Name</strong></th>
-                    <th><strong>Last Name</strong></th>
-                    <th><strong>Email</strong></th>
-                </tr>
-            </thead>
-            <tbody>
-            ${users.filter((user) => user.email.endsWith('.com')).map((user) => 
-                    `<tr>
-                        <td>${user.first_name}</td>
-                        <td>${user.last_name}</td>
-                        <td>${user.email}</td>
-                    </tr>`
-                ).join("")}
-            </tbody>
-        </table>
-    `;
-
-    return res.send(html);
-});
-
-
-app.get("/contacts", (req,res) => {
-    res.end("Contacts")
-})
 
 // Lecture # 8 
 
 // app.route('/api/users/:id') -> Can merge the similar ones using this approach.
 
-app.route('/api/users/:id')
-.get((req,res)=>{
-    const id = Number(req.params.id);
-    const user = users.find(user => user.id === id);
-
-    res.json(user)
-}).post((req, res) => {
-    // Create a User
-    const body = req.body;
-
-    users.push({ id: users.length + 1, ...body }); // Spread operator to add new user
-
-    // Write to file
-    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
-        if (err) {
-            console.error(err);
-            res.status(500).json({ message: "Error writing file" });
-        } else {
-            res.json({ message: "Success" });
-        }
-    });
-})
-.patch((req, res) => {
-    // Get the user ID from the request parameters
-    const id = Number(req.params.id);
-
-    // Find the user with the specified ID
-    const user = users.find((user) => user.id === id);
-
-    // Check if the user exists
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
-    }
-
-    // Get the index of the user in the users array
-    const index = users.indexOf(user);
-
-    // Update the user data
-    const updatedUser = Object.assign(user, req.body);
-
-    // Replace the user at the specified index with the updated data
-    users[index] = updatedUser;
-
-    // Write the updated users array to the file
-    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
-        if (err) {
-            return res.status(400).json({ message: "Failed to write in file" });
-        }
-        console.log(updatedUser)
-        res.status(200).json({ message: "Successfully written in file", updatedUser });
-    });
-
-}).delete((req,res) => {
-    // Delete a User if exists
-
-    const id = Number(req.params.id);
-    const user = users.find((user) => user.id === id);
-
-    if(!user)
-    {
-        res.status(404).json("User doesnot Exist")
-    }
-    const index = users.indexOf(user);
-
-    users.splice(index, 1); // deleting only that id
-
-    fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err) => {
-        if(err)
-        {
-            res.status(400).json("Error writing in File")
-        }
-
-        res.status(200).json("File Deleted Successfully")
-    })
-
-})
 
 
 // const server = http.createServer(app);
