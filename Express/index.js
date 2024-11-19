@@ -110,7 +110,7 @@ const userRouter = require("./Routes/userRoute.js");
 */
 
 const app = express();
-
+const path=require('path')
 // routers:
 
 // returns a middleware function.
@@ -119,6 +119,9 @@ const app = express();
 // middlewares : 
 app.use(express.urlencoded({ extended: false }))
 app.use(morgan('tiny'));    // lecture 12
+
+// app.use(express.static('./public/'))
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/users', userRouter); //attached router
 app.use('/api/users/:id', userRouter);
@@ -132,9 +135,4 @@ app.use('/api/users/:id', userRouter);
 // const server = http.createServer(app);
 // server.listen......
 
-const PORT = process.env.PORT || 3001;
-
-app.listen(PORT, ()=>{
-    console.log(`Express Server Started on PORT : ${PORT}`)
-})
-
+module.exports = app;

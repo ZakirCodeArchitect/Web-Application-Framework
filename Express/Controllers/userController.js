@@ -2,6 +2,21 @@ const fs = require("fs");
 const path = require("path");
 const users = require("../MOCK_DATA.json");
 
+// Middleware to fetch user by ID
+const hello = (req, res, next, value) => {
+    const userId = Number(value); // Ensure ID is a number
+    console.log(`UserId value: ${userId}`);
+
+    const user = users.find(user => user.id === userId);
+
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+
+    req.user = user; // Attach the user object to the request
+    next();
+};
+
 // Get all users and display them in an HTML table
 const getAllUsers = (req, res) => {
     const html = `
@@ -14,7 +29,9 @@ const getAllUsers = (req, res) => {
                 </tr>
             </thead>
             <tbody>
-            ${users.filter((user) => user.email.endsWith('.com')).map((user) => 
+            ${users
+                .filter((user) => user.email.endsWith('.com'))
+                .map((user) => 
                     `<tr>
                         <td>${user.first_name}</td>
                         <td>${user.last_name}</td>
@@ -31,27 +48,24 @@ const getAllUsers = (req, res) => {
 
 // Get a specific user by ID
 const getUserById = (req, res) => {
-    const id = Number(req.params.id);
-    const user = users.find(user => user.id === id);
-
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
-    }
-
-    res.json(user);
+    res.json(req.user); // Respond with the user from middleware
 };
 
 // Create a new user
 const createUser = (req, res) => {
     const body = req.body;
-    const newUser = { id: users.length + 1, ...body };
 
+    if (!body.first_name || !body.last_name || !body.email) {
+        return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const newUser = { id: users.length + 1, ...body };
     users.push(newUser);
 
-    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users), (err) => {
+    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users, null, 2), (err) => {
         if (err) {
             console.error(err);
-            return res.status(500).json({ message: "Error writing file" });
+            return res.status(500).json({ message: "Error writing to file" });
         }
         res.status(201).json({ message: "User added successfully", newUser });
     });
@@ -59,20 +73,14 @@ const createUser = (req, res) => {
 
 // Update a user by ID
 const updateUser = (req, res) => {
-    const id = Number(req.params.id);
-    const user = users.find((user) => user.id === id);
+    const updatedUser = { ...req.user, ...req.body };
+    const index = users.findIndex(user => user.id === req.user.id);
 
-    if (!user) {
-        return res.status(404).json({ message: "User not found" });
-    }
-
-    const updatedUser = Object.assign(user, req.body);
-    const index = users.indexOf(user);
     users[index] = updatedUser;
 
-    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users), (err) => {
+    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users, null, 2), (err) => {
         if (err) {
-            return res.status(500).json({ message: "Failed to write in file" });
+            return res.status(500).json({ message: "Error writing to file" });
         }
         res.status(200).json({ message: "User updated successfully", updatedUser });
     });
@@ -80,17 +88,11 @@ const updateUser = (req, res) => {
 
 // Delete a user by ID
 const deleteUser = (req, res) => {
-    const id = Number(req.params.id);
-    const user = users.find((user) => user.id === id);
+    const index = users.findIndex(user => user.id === req.user.id);
 
-    if (!user) {
-        return res.status(404).json({ message: "User does not exist" });
-    }
-
-    const index = users.indexOf(user);
     users.splice(index, 1);
 
-    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users), (err) => {
+    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users, null, 2), (err) => {
         if (err) {
             return res.status(500).json({ message: "Error writing to file" });
         }
@@ -104,5 +106,6 @@ module.exports = {
     getUserById,
     createUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    hello
 };
