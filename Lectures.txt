@@ -1,0 +1,153 @@
+MongoDB:
+    1. A document oriented non-relational NoSQL Database.
+    2. Store data in a document 
+        - Each document has field (key-value apirs)
+        - Each document is a json object
+    3. Flexibility
+        - Schema less
+    4. Performance
+        -> Indexing
+        -> Embeded documents
+        -> Sherding
+        {   
+            "_id": 1,
+            'name": "Zakir",
+            "email": "zakir@gmail.com",
+            "courses": ["WAF", "CC", "CG"].
+            courseInfo: [{"_id": 1, "title": "Web A..", ...},{"":"", "":"", ...}]-> emebedding documents, Nexted document objects.
+
+        }
+    5. Free and Open source
+
+    - Internally it is in BSON Format.
+
+    Commands:
+        - show MongoDB
+        - use dbname
+        - db-courses.find()
+        - db-courses.insert()
+    
+    Steps:
+    Connect to MongoDB
+    Create a new database
+    Create a collection
+    Insert documents (Create)
+    Read documents (Retrieve)
+    Update documents
+    Delete documents
+    
+    1. Create Database  
+        - use myDatabase
+
+    2. Create a Collection
+        - db.createCollection("myCollection")
+
+    3. Insert document in the Database  
+        - db.myCollection.insertOne({ name: "John Doe", age: 25, profession: "Engineer" })
+
+        - To insert multiple objects:
+            db.myCollection.insertMany([
+             { name: "Alice", age: 30, profession: "Doctor" },
+                { name: "Bob", age: 22, profession: "Designer" }
+            ])
+    4. View the Documents in the Collection
+        - db.myCollection.find()
+        - db.myCollection.find().pretty()
+
+        Read specific data: 
+        - for Specific Data: 
+            - db.myCollection.find({ name: "Alice" })
+
+        - to update one document:
+            - db.myCollection.updateOne(
+                    { name: "Alice" }, 
+                    { $set: { age: 26 } }
+                )
+        - to pdate multiple documents:
+            - db.myCollection.updateMany(
+                    { profession: "Designer" },
+                    { $set: { profession: "Graphic Designer" } }
+                )
+
+        - to delete one document:
+            - db.myCollection.deleteOne({ name: "Charlie" })
+
+        - to delete multiple documents:
+            - db.myCollection.deleteMany({ profession: "Graphic Designer" })
+
+
+    5. Check existing Database and Collections
+        - show databases
+        - show collections
+
+    6. Find documents where name is "Alice" OR age is greater than 25.
+        - db.myCollection.find({
+            $or: [
+                { name: "Alice" },
+                { age: { $gt: 25 } }
+                ]
+            })
+
+    7. AND Operator
+        db.myCollection.find({
+            $and: [
+                { name: "Alice" },
+                { age: { $gt: 25 } }
+            ]
+        })
+
+    8. Find documents where name is "Alice" AND age is greater than 25.
+        db.myCollection.find({
+            $and: [
+            { name: "Alice" },
+            { age: { $gt: 25 } }
+        ]
+        })
+
+
+    9. where age is less than 25
+        db.myCollection.find({ age: { $lt: 25 } })
+
+    10. Find documents where age is not equal to 30.
+        db.myCollection.find({ age: { $ne: 30 } })
+
+    11. To add a field and return the updated document:
+        db.users.findOneAndUpdate(
+            { _id: ObjectId("your_document_id") }, // Filter
+            { $set: { isVerified: true } }, // New field
+            { returnDocument: "after" } // Returns the updated document
+        )
+
+    12. Update many documents
+        db.users.updateMany(
+            { organization: "QAU" }, // Filter criteria
+            { $set: { status: "active" } } // New field and value
+        )
+
+    13. Add or update multiple fields at once for all matching documents:
+        db.users.updateMany(
+            { department: "Computer Science" }, // Filter criteria
+            { $set: { status: "active", lastUpdated: new Date() } } // Fields to update
+        )
+
+    14. Remove the temporaryField from all matching documents:
+        db.users.updateMany(
+            { organization: "QAU" }, // Filter
+            { $unset: { temporaryField: "" } } // Remove field
+        )
+    
+    15. Remove Multiple Fields at Once
+        db.users.updateMany(
+            { department: "Computer Science" }, // Filter criteria
+            { $unset: { temporaryField1: "", temporaryField2: "" } } // Fields to remove
+        )
+
+    16. Remove a Field from a Single Document
+        db.users.updateOne(
+            { _id: ObjectId("your_document_id") }, // Filter to find the document
+            { $unset: { temporaryField: "" } } // Field to remove
+        )
+    
+
+
+
