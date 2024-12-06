@@ -151,3 +151,8 @@ MongoDB:
 
 
 
+    -> Mongoose
+        - an object data modelling(ODM) library for MongoDB and Nodejs providing highet level of abstraction.
+
+        - Schema is created to model data.
+        - 
