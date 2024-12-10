@@ -1,8 +1,9 @@
 const fs = require("fs");
 const path = require("path");
-const users = require("../MOCK_DATA.json");
-
+// const users = require("../MOCK_DATA.json");
+const user = require("../Models/userModel") 
 // Middleware to fetch user by ID
+
 const hello = (req, res, next, value) => {
     const userId = Number(value); // Ensure ID is a number
     console.log(`UserId value: ${userId}`);
@@ -18,86 +19,94 @@ const hello = (req, res, next, value) => {
 };
 
 // Get all users and display them in an HTML table
-const getAllUsers = (req, res) => {
-    const html = `
-        <table border="1" cellpadding="9" cellspacing="0">
-            <thead>
-                <tr>
-                    <th><strong>First Name</strong></th>
-                    <th><strong>Last Name</strong></th>
-                    <th><strong>Email</strong></th>
-                </tr>
-            </thead>
-            <tbody>
-            ${users
-                .filter((user) => user.email.endsWith('.com'))
-                .map((user) => 
-                    `<tr>
-                        <td>${user.first_name}</td>
-                        <td>${user.last_name}</td>
-                        <td>${user.email}</td>
-                    </tr>`
-                ).join("")}
-            </tbody>
-        </table>
-    `;
-
-    res.setHeader("Content-Type", "text/html");
-    res.send(html);
+const getAllUsers = async (req, res) => {
+    try{
+        const users = await user.find();
+        return res.status(200).json({
+            message: "Retrieved Data",
+            // numOfUsers: users.length,
+            data: {users}
+        })
+    }catch(err)
+    {
+        return res.status(204).json({
+            status: 'failure',
+            msg: err.message
+        })
+    }
 };
 
 // Get a specific user by ID
-const getUserById = (req, res) => {
-    res.json(req.user); // Respond with the user from middleware
+const getUserById = async (req, res) => {
+    try
+    {
+        const result = await user.findByID(req.params.id)    // searching from the database that object.
+        res.status(200).json({
+            status: '200',
+            msg: "Specific ID User successfully retrived",
+            data: {result}
+        })
+    }catch(err)
+    {
+        res.status(204).json({
+            status: 'failure',
+            msg: err.message
+        })
+    }
 };
 
 // Create a new user
 const createUser = (req, res) => {
-    const body = req.body;
+    // const newUser = new user({
+    //     first_name: "Zakir",
+    //     last_name: "Matloob",
+    //     email: "zakir@gmail.com",
+    //     gender: "male"
+    // });
 
-    if (!body.first_name || !body.last_name || !body.email) {
-        return res.status(400).json({ message: "Missing required fields" });
-    }
+    // newUser.save()
+    //     .then((doc) => {
+    //         console.log(doc);
+    //         return res.status(200).json({
+    //             message: "Successfully written",
+    //             data: doc // Return the saved document, not the `newUser` instance
+    //         });
+    //     })
+    //     .catch((err) => {
+    //         console.error(err); // Log the error for debugging
+    //         return res.status(500).json({
+    //             message: "Error occurred while saving user",
+    //             error: err.message // Return the error message
+    //         });
+    //     });
 
-    const newUser = { id: users.length + 1, ...body };
-    users.push(newUser);
-
-    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users, null, 2), (err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ message: "Error writing to file" });
-        }
-        res.status(201).json({ message: "User added successfully", newUser });
-    });
+    // because of this, data is automatically getting inserted
+        user.create({
+                first_name: "Shetty",
+                last_name: "don",
+                email: "zakir@gmail.com",
+                gender: "male"
+            }).then((doc) => {
+                console.log(doc);
+                return res.status(200).json({
+                        message: "Your Data has been inserted",
+                })
+                
+            }).catch((err) => {
+                console.log(err)
+            })
+    
 };
+
 
 // Update a user by ID
 const updateUser = (req, res) => {
-    const updatedUser = { ...req.user, ...req.body };
-    const index = users.findIndex(user => user.id === req.user.id);
-
-    users[index] = updatedUser;
-
-    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users, null, 2), (err) => {
-        if (err) {
-            return res.status(500).json({ message: "Error writing to file" });
-        }
-        res.status(200).json({ message: "User updated successfully", updatedUser });
-    });
+    
 };
 
 // Delete a user by ID
 const deleteUser = (req, res) => {
-    const index = users.findIndex(user => user.id === req.user.id);
-
-    users.splice(index, 1);
-
-    fs.writeFile(path.join(__dirname, "../MOCK_DATA.json"), JSON.stringify(users, null, 2), (err) => {
-        if (err) {
-            return res.status(500).json({ message: "Error writing to file" });
-        }
-        res.status(200).json({ message: "User deleted successfully" });
-    });
+    
 };
 
 // Export all functions
@@ -107,5 +116,5 @@ module.exports = {
     createUser,
     updateUser,
     deleteUser,
-    hello
+    hello    
 };
