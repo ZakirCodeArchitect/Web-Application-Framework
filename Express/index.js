@@ -5,6 +5,7 @@ const dotenv = require('dotenv').config();
 const morgan = require('morgan');
 
 const userRouter = require("./Routes/userRoute.js");
+const bodyParser = require("body-parser"); 
 
 /*  Information: 
 
@@ -111,6 +112,14 @@ const userRouter = require("./Routes/userRoute.js");
 
 const app = express();
 const path=require('path')
+
+// middleware:
+
+app.use(bodyParser.json());
+
+// Middleware to parse URL-encoded data (like form submissions)
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // routers:
 
 // returns a middleware function.
@@ -123,8 +132,18 @@ app.use(morgan('tiny'));    // lecture 12
 // app.use(express.static('./public/'))
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+// Set EJS as the view engine
+app.set("view engine", "ejs");
+
+// Set views folder for EJS templates
+app.set("views", path.join(__dirname, "views"));
+
 app.use('/api/users', userRouter); //attached router
 app.use('/api/users/:id', userRouter);
+
+
 
 // Lecture # 8 
 
