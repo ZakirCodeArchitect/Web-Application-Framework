@@ -1,0 +1,15 @@
+/*
+
+    - REACT.JS
+        1. a Javascript library.
+        2. not a framework -> framework we gets bounded on the provided packages.
+        3. used to build interfaces using components [ Resuable components ]
+        4. Virtual DOM
+        5. using JSX - Javascript XML. [ HMTL Like code within Js file ].
+        6. Packages:
+            - npm create vite@latest. [react,js]
+            - cd mp-app
+            - npm install
+            - npm run dev   ( development server )
+            - 
+        7. src contains 
